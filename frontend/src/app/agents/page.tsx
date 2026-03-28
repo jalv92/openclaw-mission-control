@@ -4,14 +4,15 @@ import { useWebSocket } from '@/hooks/useWebSocket';
 import { useCallback, useState } from 'react';
 import { API } from '@/lib/api';
 import StatusBadge from '@/components/StatusBadge';
-import { Server, Code2, Brain, Eye, Shield, ChevronDown, ChevronUp } from 'lucide-react';
+import { Server, Code2, Brain, Eye, Shield, Search, ChevronDown, ChevronUp, Zap } from 'lucide-react';
 
-const AGENT_META: Record<string, { icon: React.ReactNode; desc: string }> = {
-  orchestrator: { icon: <Server size={20} />, desc: 'Main loop coordinator. Handles triage and task dispatching.' },
-  coder_agent: { icon: <Code2 size={20} />, desc: 'Generates and writes code files from task descriptions.' },
-  memory_keeper: { icon: <Brain size={20} />, desc: 'Writes daily and long-term memory logs.' },
-  ollama_watcher: { icon: <Eye size={20} />, desc: 'Monitors Ollama model health and availability.' },
-  github_guardian: { icon: <Shield size={20} />, desc: 'Handles git operations and code safety.' },
+const AGENT_META: Record<string, { icon: React.ReactNode; desc: string; onDemand?: boolean }> = {
+  orchestrator:    { icon: <Server size={20} />, desc: 'Cerebro CTO. Lee la cola de tareas, hace triage con el Consejo de Planners y delega al Coder Agent.' },
+  coder_agent:     { icon: <Code2 size={20} />,  desc: '⚡ On-Demand — Se activa cuando el Orchestrator le asigna una tarea. Genera código usando qwen2.5-coder:14b → Gemini → Claude según dificultad.', onDemand: true },
+  research_agent:  { icon: <Search size={20} />, desc: 'Investiga en internet usando DuckDuckGo + Gemini. Guarda contexto en memoria para el Coder Agent.' },
+  memory_keeper:   { icon: <Brain size={20} />,  desc: 'Escanea outputs del Coder Agent, logs de todos los agentes y resultados de Research. Escribe en memoria diaria cada 30 min.' },
+  ollama_watcher:  { icon: <Eye size={20} />,    desc: 'Vigila Ollama cada 60s. Reinicia si cae, alerta si faltan modelos requeridos.' },
+  github_guardian: { icon: <Shield size={20} />, desc: 'Vigila el workspace cada 10 min. Auto-commit y push de cambios. Detecta proyectos nuevos y los sube a GitHub.' },
 };
 
 export default function AgentsPage() {
@@ -66,7 +67,7 @@ export default function AgentsPage() {
                 <div style={{
                   padding: '0.75rem', borderRadius: 'var(--radius-md)',
                   background: 'var(--bg-tertiary)',
-                  color: info.status === 'active' ? 'var(--accent-blue)' : 'var(--text-tertiary)'
+                  color: info.status === 'active' ? 'var(--accent-blue)' : info.status === 'on-demand' ? 'var(--accent-blue)' : 'var(--text-tertiary)'
                 }}>
                   {meta.icon}
                 </div>
