@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Env files (contienen secrets)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Build
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# PIDs
+*.pid

@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+watchdog
+python-multipart
+pydantic
+pydantic-settings
+websockets
+psutil
