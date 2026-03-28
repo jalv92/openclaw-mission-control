@@ -4,6 +4,7 @@ import { useWebSocket } from '@/hooks/useWebSocket';
 import { useCallback, useState } from 'react';
 import { API } from '@/lib/api';
 import StatusBadge from '@/components/StatusBadge';
+import { showToast } from '@/components/Toast';
 
 export default function TasksPage() {
   const { data: tasks, updateData: setTasks, isLoading } = useApi<any[]>('/api/tasks');
@@ -13,7 +14,9 @@ export default function TasksPage() {
     try {
       const ts = await API.get('/api/tasks');
       setTasks(ts);
-    } catch (e) {}
+    } catch (e: any) {
+      showToast('error', 'Failed to refresh tasks.');
+    }
   }, [setTasks]);
 
   useWebSocket((msg) => {
@@ -29,7 +32,10 @@ export default function TasksPage() {
       await API.post('/api/tasks', { desc: newTaskDesc.trim(), status: 'pending', level: 1, task_type: 'single_script' });
       setNewTaskDesc('');
       refreshTasks();
-    } catch(e) {}
+      showToast('success', 'Task added to queue.');
+    } catch (e: any) {
+      showToast('error', 'Failed to add task. Please try again.');
+    }
   };
 
   const columns = ['pending', 'triaging', 'in_progress', 'completed', 'failed'];

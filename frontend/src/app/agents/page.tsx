@@ -4,6 +4,7 @@ import { useWebSocket } from '@/hooks/useWebSocket';
 import { useCallback, useState } from 'react';
 import { API } from '@/lib/api';
 import StatusBadge from '@/components/StatusBadge';
+import { showToast } from '@/components/Toast';
 import { Server, Code2, Brain, Eye, Shield, Search, ChevronDown, ChevronUp, Zap } from 'lucide-react';
 
 const AGENT_META: Record<string, { icon: React.ReactNode; desc: string; onDemand?: boolean }> = {
@@ -21,7 +22,7 @@ export default function AgentsPage() {
   const [agentLogs, setAgentLogs] = useState<Record<string, string[]>>({});
 
   const refreshAgents = useCallback(async () => {
-    try { setAgents(await API.get('/api/agents')); } catch (e) {}
+    try { setAgents(await API.get('/api/agents')); } catch (e: any) { showToast('error', 'Failed to refresh agents.'); }
   }, [setAgents]);
 
   useWebSocket((msg) => {
@@ -38,7 +39,7 @@ export default function AgentsPage() {
       try {
         const res = await API.get(`/api/agents/${agentId}/log?lines=80`);
         setAgentLogs(prev => ({ ...prev, [agentId]: res.log || [] }));
-      } catch (e) {}
+      } catch (e: any) { showToast('error', `Failed to load ${agentId} logs.`); }
     }
   };
 

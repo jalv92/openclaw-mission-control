@@ -2,6 +2,7 @@
 import { useApi } from '@/hooks/useApi';
 import { useCallback, useState } from 'react';
 import { API } from '@/lib/api';
+import { showToast } from '@/components/Toast';
 import { Folder, FolderOpen, FileText, ChevronRight } from 'lucide-react';
 
 interface TreeNode {
@@ -71,7 +72,8 @@ export default function WorkspacePage() {
     try {
       const res = await API.get(`/api/workspace/file?file_path=${encodeURIComponent(path)}`);
       setFileContent(res.content || '');
-    } catch (e) {
+    } catch (e: any) {
+      showToast('error', 'Failed to load file.');
       setFileContent('Could not load file.');
     } finally {
       setLoadingFile(false);

@@ -4,6 +4,7 @@ import { useApi } from '@/hooks/useApi';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { API } from '@/lib/api';
 import StatusBadge from '@/components/StatusBadge';
+import { showToast } from '@/components/Toast';
 import { Server, Brain, Activity, Code2, ListTodo } from 'lucide-react';
 
 export default function Dashboard() {
@@ -19,7 +20,9 @@ export default function Dashboard() {
       ]);
       setAgents(_agents);
       setTasks(_tasks);
-    } catch(e) {}
+    } catch(e: any) {
+      showToast('error', 'Failed to refresh data. Check your connection.');
+    }
   }, [setAgents, setTasks]);
 
   const { connected } = useWebSocket((msg) => {

@@ -3,6 +3,7 @@ import { useApi } from '@/hooks/useApi';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { API } from '@/lib/api';
+import { showToast } from '@/components/Toast';
 
 export default function ActivityPage() {
   const [logsList, setLogsList] = useState<string[]>([]);
@@ -17,7 +18,7 @@ export default function ActivityPage() {
       if (!selectedLog && res.files && res.files.length > 0) {
         setSelectedLog(res.files[0]);
       }
-    } catch(e) {}
+    } catch (e: any) { showToast('error', 'Failed to load logs list.'); }
   }, [selectedLog]);
 
   const fetchLogContent = useCallback(async () => {
@@ -30,7 +31,7 @@ export default function ActivityPage() {
           listRef.current.scrollTop = listRef.current.scrollHeight;
         }
       }
-    } catch(e) {}
+    } catch (e: any) { showToast('error', 'Failed to load log content.'); }
   }, [selectedLog]);
 
   useEffect(() => {

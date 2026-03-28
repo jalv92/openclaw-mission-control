@@ -2,6 +2,7 @@
 import { useApi } from '@/hooks/useApi';
 import { useCallback, useState } from 'react';
 import { API } from '@/lib/api';
+import { showToast } from '@/components/Toast';
 import { FileText, Calendar } from 'lucide-react';
 
 export default function MemoryPage() {
@@ -16,7 +17,8 @@ export default function MemoryPage() {
     try {
       const res = await API.get(`/api/memory/${dateStr}`);
       setContent(res.content || '');
-    } catch (e) {
+    } catch (e: any) {
+      showToast('error', 'Failed to load memory file.');
       setContent('Could not load memory file.');
     } finally {
       setLoadingContent(false);

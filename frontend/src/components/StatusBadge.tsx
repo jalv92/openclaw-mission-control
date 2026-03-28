@@ -24,19 +24,24 @@ export default function StatusBadge({ status, label }: { status: AgentStatus; la
     : <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: style.text, display: 'inline-block', boxShadow: `0 0 8px ${style.text}` }} />;
 
   return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: '0.35rem',
-      padding: '0.15rem 0.6rem',
-      borderRadius: '999px',
-      background: style.bg,
-      color: style.text,
-      fontSize: '0.75rem',
-      fontWeight: '600',
-      textTransform: 'uppercase',
-      whiteSpace: 'nowrap'
-    }}>
+    <span
+      role="status"
+      aria-live="polite"
+      aria-label={`Status: ${displayLabel}`}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.35rem',
+        padding: '0.15rem 0.6rem',
+        borderRadius: '999px',
+        background: style.bg,
+        color: style.text,
+        fontSize: '0.75rem',
+        fontWeight: '600',
+        textTransform: 'uppercase',
+        whiteSpace: 'nowrap'
+      }}
+    >
       {dot}
       {displayLabel}
     </span>

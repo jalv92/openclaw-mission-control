@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { API } from '@/lib/api';
-import { Save, RotateCcw } from 'lucide-react';
+import { showToast } from '@/components/Toast';
+import { Save, RotateCcw, AlertTriangle } from 'lucide-react';
 
 export default function SettingsPage() {
   const [apiUrl, setApiUrl] = useState('');
@@ -24,22 +25,23 @@ export default function SettingsPage() {
   const handleTest = async () => {
     setTestResult('Testing...');
     try {
-      // Temporarily update to test
-      const savedUrl = localStorage.getItem('mc_api_url');
-      const savedToken = localStorage.getItem('mc_token');
+      // Temporarily set these values for the test
       localStorage.setItem('mc_api_url', apiUrl);
       localStorage.setItem('mc_token', token);
       await API.get('/api/tasks');
       setTestResult('✅ Connection successful!');
-      // Restore if test was for preview only
+      showToast('success', 'Connection successful!');
     } catch (e: any) {
       setTestResult(`❌ Failed: ${e.message}`);
+      showToast('error', `Connection failed: ${e.message}`);
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('mc_token');
-    window.location.reload();
+    if (confirm('Are you sure you want to logout? This will clear your session token.')) {
+      localStorage.removeItem('mc_token');
+      window.location.reload();
+    }
   };
 
   return (
@@ -52,8 +54,8 @@ export default function SettingsPage() {
       <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         <h3 style={{ fontWeight: 600, borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>Backend Connection</h3>
         
-        <InputField label="API URL" value={apiUrl} onChange={setApiUrl} placeholder="https://your-tunnel.trycloudflare.com" help="Your Cloudflare tunnel URL or http://localhost:8000 for local." />
-        <InputField label="Access Token" value={token} onChange={setToken} placeholder="Your MC token" type="password" help="The MC_TOKEN set when starting the backend server." />
+        <InputField id="api-url" label="API URL" value={apiUrl} onChange={setApiUrl} placeholder="https://your-tunnel.trycloudflare.com" help="Your Cloudflare tunnel URL or http://localhost:8000 for local." />
+        <InputField id="access-token" label="Access Token" value={token} onChange={setToken} placeholder="Your MC token" type="password" help="The MC_TOKEN set when starting the backend server." />
         
         <div style={{ display: 'flex', gap: '1rem' }}>
           <button onClick={handleSave} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.25rem', borderRadius: 'var(--radius-sm)', background: saved ? 'var(--accent-green)' : 'var(--accent-blue)', color: 'white', fontWeight: 600, transition: 'background 0.2s' }}>
@@ -91,18 +93,20 @@ export default function SettingsPage() {
   );
 }
 
-function InputField({ label, value, onChange, placeholder, type = 'text', help }: any) {
+function InputField({ label, value, onChange, placeholder, type = 'text', help, id }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; type?: string; help?: string; id: string }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-      <label style={{ fontWeight: 500, fontSize: '0.9rem' }}>{label}</label>
+      <label htmlFor={id} style={{ fontWeight: 500, fontSize: '0.9rem' }}>{label}</label>
       <input
+        id={id}
         type={type}
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
+        aria-describedby={help ? `${id}-help` : undefined}
         style={{ padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', color: 'white', outline: 'none', fontSize: '0.9rem', fontFamily: type === 'password' ? 'var(--font-mono)' : 'var(--font-sans)' }}
       />
-      {help && <p style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)' }}>{help}</p>}
+      {help && <p id={`${id}-help`} style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)' }}>{help}</p>}
     </div>
   );
 }
