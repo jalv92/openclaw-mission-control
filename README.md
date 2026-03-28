@@ -7,40 +7,56 @@ Dashboard web para monitorear y controlar el ecosistema de agentes autónomos Op
 - **Frontend:** Next.js 16 + TypeScript + React
 
 ## Características
-- 📊 Vista en tiempo real de todos los agentes (Orchestrator, Coder Agent, Research Agent, etc.)
+- 📊 Vista en tiempo real de todos los agentes
 - 📋 Gestión de cola de tareas (crear, monitorear, cancelar)
 - 🧠 Visor de memoria diaria del sistema
 - 📝 Logs en vivo de cada agente
 - 🗂️ Explorador del workspace
-- ⚙️ Configuración del backend (URL + token)
+- ⚙️ Configuración del backend
 - 🔌 WebSocket para actualizaciones en tiempo real
 
 ## Inicio rápido
 
-### Backend
+### Opción A — Script automático
+```powershell
+.\START_MISSION_CONTROL.ps1
+```
+Abre el navegador en `http://localhost:3000` → token: `openclaw-mc-token`
+
+### Opción B — Manual
+
+**Backend:**
 ```bash
 cd backend
 pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### Frontend
+**Frontend:**
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Abre `http://localhost:3000` y usa el token `openclaw-mc-token`.
-
 ## Variables de entorno
 
-**Backend** — no requiere `.env`, configuración en `core/config.py`
-
-**Frontend** — crear `frontend/.env.local`:
+Crear `frontend/.env.local`:
 ```
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
+
+## Acceso remoto (opcional)
+
+Si quieres acceder desde tu móvil u otra red, usa Cloudflare Tunnel:
+```bash
+cloudflared tunnel --url http://localhost:3000
+```
+Te genera una URL pública temporal. Para el backend también:
+```bash
+cloudflared tunnel --url http://localhost:8000
+```
+Luego configura esa URL en `/settings` del dashboard.
 
 ## Arquitectura
 
@@ -57,11 +73,3 @@ backend/
 ├── routers/       # tasks, agents, memory, system, workspace, logs
 └── services/      # data_reader, process_monitor, watcher, websocket_manager
 ```
-
-## Acceso desde cualquier lugar
-
-Para acceder desde fuera de tu red local, usa Cloudflare Tunnel:
-```bash
-cloudflared tunnel --url http://localhost:8000
-```
-Copia la URL generada y configúrala en `/settings` del dashboard.
