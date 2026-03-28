@@ -13,8 +13,9 @@ Start-Sleep -Seconds 5
 
 # ── Agentes OpenClaw ────────────────────────────────────────────────────────────
 Write-Output "[$(Get-Date)] Lanzando agentes OpenClaw..." | Out-File "$LOG_DIR\autostart.log" -Append
-Start-Process python -ArgumentList "C:\Users\javlo\.openclaw\workspace\start_agents.py" -WindowStyle Hidden
-Start-Sleep -Seconds 8
+# Usamos start_agents.py con DEVNULL para evitar bloqueos por handle de archivo abierto
+Start-Process python -ArgumentList "C:\Users\javlo\.openclaw\workspace\start_agents.py" -WindowStyle Hidden -WorkingDirectory "C:\Users\javlo\.openclaw\workspace"
+Start-Sleep -Seconds 10
 
 # ── Backend (FastAPI / uvicorn) ────────────────────────────────────────────────
 $backendRunning = $false
